@@ -1,0 +1,76 @@
+.card-container {
+    margin: 0;
+    width: 270px;
+}
+
+.product-card {
+    width: 100%; height: 350px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.product-card, .card {
+    margin: 0%;
+}
+
+.product-card img {
+    width: 100%;
+    height: 295px;
+}
+
+.card {
+    height: auto;
+    padding: 8px 12px;
+    width: 100%;
+}
+
+.card-container .product-card {
+    padding: 3%;
+    box-shadow: 8px 8px 8px rgba(241, 241, 240, 1);
+    width: 300px;
+}
+
+.card-container .product-card span {
+    text-align: center;
+    margin: 0;
+}
+
+
+.add-to-cart-button {
+    color: whitesmoke;
+    border-radius: 5px;
+    width: 75%;
+    border-image:
+        linear-gradient(
+            to right,
+            rgba(53, 52, 157, 1),
+            rgba(69, 64, 213, 1)
+    );
+
+    padding: 3%;
+
+    background-image: linear-gradient(
+            to right,
+            rgba(53, 52, 157, 1),
+            rgba(69, 64, 213, 1)
+    );
+    margin: 8px 0;
+}
+
+.inner-card {
+    width: 75%;
+}
+
+.percent-off {
+    font-weight: bold;
+    color: red;
+}
+
+#product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* set the number of columns and their width */
+    grid-gap: 5px; /* add some space between each card */
+    /*justify-content: center;*/
+    /*align-items: center;*/
+}

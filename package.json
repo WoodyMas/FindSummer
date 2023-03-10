@@ -1,0 +1,7 @@
+{
+  "name": "SpringIt",
+  "version": "1.0.0",
+  "dependencies": {
+    "tailwindcss": "^3.2.7"
+  }
+}

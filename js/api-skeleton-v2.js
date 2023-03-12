@@ -9,6 +9,7 @@ let editedUrl = `${apiUrl}&resultsFormat=native&q=${userSearchQ}&redirectRespons
 function clearProductGrid() {
     productGrid.innerHTML = "";
 }
+window.onload = function () {
 
 fetch(editedUrl)
     .then((response) => response.json())
@@ -33,3 +34,4 @@ fetch(editedUrl)
         document.getElementById("product-grid").innerHTML = html;
         attachAddToCart();
     });
+}

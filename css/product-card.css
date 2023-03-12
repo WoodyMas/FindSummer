@@ -1,6 +1,9 @@
+
 .card-container {
     margin: 0;
     width: 270px;
+    display: flex;
+    justify-content: center;
 }
 
 .product-card {
@@ -27,8 +30,13 @@
 
 .card-container .product-card {
     padding: 3%;
-    box-shadow: 8px 8px 8px rgba(241, 241, 240, 1);
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.42);
     width: 300px;
+}
+
+.card-container:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(241, 241, 240, 1);
 }
 
 .card-container .product-card span {
@@ -38,22 +46,24 @@
 
 
 .add-to-cart-button {
-    color: whitesmoke;
+    color: black;
     border-radius: 5px;
     width: 75%;
-    border-image:
-        linear-gradient(
-            to right,
-            rgba(53, 52, 157, 1),
-            rgba(69, 64, 213, 1)
-    );
+    /*border-image:*/
+    /*    linear-gradient(*/
+    /*        to right,*/
+    /*        rgb(255, 231, 126),*/
+    /*        rgb(133, 134, 94)*/
+    /*);*/
 
     padding: 3%;
 
+    border: solid 1px silver;
+
     background-image: linear-gradient(
-            to right,
-            rgba(53, 52, 157, 1),
-            rgba(69, 64, 213, 1)
+            to bottom,
+            rgb(252, 252, 247),
+            rgb(255, 231, 126)
     );
     margin: 8px 0;
 }
@@ -69,8 +79,18 @@
 
 #product-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* set the number of columns and their width */
+    /*grid-template-columns: repeat(3, 1fr); !* set the number of columns and their width *!*/
+    grid-template-columns: repeat(4, minmax(275px, auto));
+
     grid-gap: 5px; /* add some space between each card */
-    /*justify-content: center;*/
+    justify-content: center;
     /*align-items: center;*/
+    text-align: center;
+    margin: 0 auto;
+
 }
+
+.center {
+    margin: 0 auto;
+}
+

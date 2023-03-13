@@ -1,95 +1,69 @@
 #click-me-div {
-    display: flex;
     height: 100%;
-    width: available;
-    margin: 45px 0;
-    flex-flow: column;
+    display: flex;
+    margin: 10px 0;
+    justify-content: center;
+    align-items: center;
+}
+
+#large-hero-scene {
+    /*margin: 5px;*/
+    width: 646px;
+    height: 280px;
+    background-color: red;
+    border-radius: 12px;
+
+}
+
+#smaller-hero-scene-wrapper {
+    display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
+    width: 660px;
+    height: 325px;
 }
 
-#click-me-div div>* {
+.smaller-hero {
+    margin: 5px;
+    width: 45%;
+    height: 45%;
+    border-radius: 12px;
+}
+
+.smaller-hero:nth-child(1) {
+    background-color: green;
+}
+
+.smaller-hero:nth-child(2) {
+    background-color: blue;
+}
+
+.smaller-hero:nth-child(3) {
+    background-color: purple;
+}
+
+.smaller-hero:nth-child(4) {
+    background-color: darkslategray;
+}
+
+#click-me-div > div {
+    display: flex;
+    height: 100%;
+}
+
+.click-me-div__row > div {
+    flex-basis: 50%;
     display: flex;
     justify-content: center;
-    align-content: center;
-    /*align-items: center;*/
-    /*background-color: red;*/
-}
-
-
-#click-me-div button {
-    height: 40px;
-    width: 150px
-}
-
-#click-me-div :first-child div {
-    /*justify-content: center;*/
     align-items: center;
-    text-align: center;
-    margin: 30px 0;
-    /*width: 70%;*/
-    height: 60%;
-    /*background-color: red;  */
-    /*height: 100%;*/
-    /*align-content: center;*/
 }
 
-#click-me-div button {
-    border-radius: 12px;
-    justify-content: center;
-    align-items: center;
-    height: 50px;
-}
-
-.bg-image {
-    /*height: 100%;*/
-    margin: 0;
-    /*background-image: linear-gradient(to right, red, blue);*/
-
-}
-
-#click-me-div > div:first-child > div:first-child {
-    margin: 0;
-    /*height: 100%;*/
+.click-me-div__row > * > * {
+    margin: 0 auto;
 }
 
 
 
-#click-me-div :nth-child(1)>div {
-    margin: 0;
-    /*height: 100%;*/
-
-}
-
-#click-me-div :nth-child(1)>*:not(button) {
-    margin: 0;
-    /*height: 100%;*/
-}
 
 
-#click-me-div :nth-child(2)>*:not(button) {
-    margin: 0;
-    /*height: 100%;*/
-}
-
-#click-me-div :nth-child(2) button {
-
-}
-
-.img-zero {
-    /*height: 100%;*/
-    background-size: 673px 150px;
-    /*background-position: left 100px;*/
-    width: 50%;
-    height: 20%;
-    /*background-image: url("/img/ai-image_shop-now.png");*/
-    border-radius: 15px;
-}
-
-.img-one, .img-two, .img-three, .img-four {
-    margin: 0;
-    /*height: 25%;*/
-    /*margin-top: 12px;*/
-    /*background-size: cover;*/
-
-}

@@ -42,5 +42,5 @@ fetch(apiUrl)
             })
             .join("");
         document.getElementById("product-grid").innerHTML = html;
-        attachAddToCart();
+        attachAddToCartV2(data);
     });

@@ -1,72 +1,171 @@
+
 // https://siteid.a.searchspring.io/api/search/search.json?siteId=scmq7n&resultsFormat=native&q=jeans&redirectResponse=minimal&page=1&resultsPerPage=24&newKey=New%20Value'
 const SEARCHSPRING_SITE_ID = "scmq7n";
 const baseUrl = `https://${SEARCHSPRING_SITE_ID}.a.searchspring.io/api/search/search.json?&siteId=${SEARCHSPRING_SITE_ID}`;
 // let editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&redirectResponse=minimal&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
-let userSearchQuery = "shoes";
-let pageNum = 1;
-let resultsPerPage = 25;
+
 
 // variable to store API data
-let ssApiData = [];
+// let ssApiData = [];
 
 let productGrid = document.getElementById("product-grid");
 let paginationContainer = document.querySelector(".pagination-container");
 let clickMeDiv = document.getElementById("click-me-div");
+let clickMeDivButtons = clickMeDiv.querySelectorAll("button");
 const options = {method: 'GET', headers: {accept: 'application/json'}};
-
-
 let searchInput = document.getElementById("search-input");
-let inputSearchIcon = document.getElementById("input-search-icon");
-let searchQuery = "";
+let searchIcon = document.getElementById("input-search-icon");
+let resultsPerPage = document.getElementById("per-page").innerText;
+
+const paginationData = (data) => {
+    let pageData = {
+    // beginning count of items NOT pages (starting at 1)
+    begin: data.pagination.begin,
+    // Ending count of items NOT pages (if there are 12 results, the end is 13)
+    end: data.pagination.end,
+    previousPage: data.pagination.previousPage,
+    currentPage: data.pagination.currentPage,
+    nextPage: data.pagination.nextPage,
+    totalPages: data.pagination.totalPages,
+    perPage: data.pagination.perPage,
+    defaultPerPage: data.pagination.defaultPerPage,
+    totalResults: data.pagination.totalResults
+    };
+
+    console.log(pageData);
+    return pageData;
+}
+
+const filterValueSearch = (data) => {
+    let searchValue = data.breadcrumbs[0].filterValue;
+    console.log(searchValue);
+    return searchValue;
+}
+
+const results = (data) => {
+    let results = data.results;
+    console.log(results);
+    return results;
+}
+
 
 function replaceSpacesWithAsterisks(str) {
     return str.replace(/ /g, '*');
 }
+(function () {
+    // console.log(clickMeDivButtons.length);
+    quickItemsView();
+    // fullSend('Sale', 1, 24);
+
+})();
 
 function resetDefaults() {
     clearProductGrid();
+}
 
+function attachAddToCartV2(data) {
+    /* Add your add to cart logic here */
+    let addToCartButton = document.querySelectorAll(".add-to-cart-button");
+    let cartSize = document.getElementById("cart-size");
+
+    addToCartButton.forEach((button, i) => {
+        function getItemIndex(pageNum, perPage, totalResults) {
+            const totalPages = Math.ceil(totalResults / perPage);
+            const currentPage = pageNum;
+            const begin = (currentPage - 1) * perPage + 1;
+            const end = Math.min(begin + perPage - 1, totalResults);
+            // const previousPage = currentPage - 1 > 0 ? currentPage - 1 : 0;
+
+            console.log(`Showing items ${begin}-${end} of ${totalResults}. Page ${currentPage} of ${totalPages}.`);
+
+            const relativeIndex = (currentPage - 1) * perPage + i + 1;
+            console.log(`Relative index: ${relativeIndex}`);
+
+            return [{currentPage, perPage, totalPages, totalResults, begin, end}]
+        }
+
+        button.addEventListener("click", () => {
+            console.log(getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults));;
+            cartSize.innerText++;
+        });
+    });
+
+}
+
+function cartItemRetriever(arrObj) {
+    // cartItem( URL, index, resultsPerPage, searchQuery, pageNum)
+
+
+
+}
+
+
+
+
+
+function quickItemsView() {
+    clickMeDivButtons.forEach(button =>{
+        button.addEventListener('click', () =>{
+            console.log(button.getAttribute('data-id'))
+            fullSend(button.getAttribute('data-id'), 1, 24);
+        })
+    })
 }
 
 searchInput.addEventListener('keydown', (ev) => {
     if (ev.key === "Enter") {
        let searchQ = searchInput.value;
        let pageNum = 1;
-       // let resultsPerPage = 13;
+
+        let resultsPerPage = 13;
+
+        fullSend(searchQ, pageNum, 24);
+    }
+});
+
+searchIcon.addEventListener('click', () => {
+
+        let searchQ = searchInput.value;
+        let pageNum = 1;
+        let resultsPerPage = document.getElementById("per-page");
 
         fullSend(searchQ, pageNum, resultsPerPage);
-    }
+
 });
 
 function fullSend(userSearchQ, pageNum, resultsPerPage) {
     let importantDetails = [];
     resetDefaults();
-    // userSearchQuery = searchInput.value;
-    // console.log(userSearchQuery);
+
     ssApiCall(userSearchQ, pageNum, resultsPerPage).then((data) =>{
-        // importantDetails = data;
+        importantDetails = [results(data), paginationData(data), filterValueSearch(data)];
+        console.log(importantDetails);
         console.log(data);
         // console.log(getItemAndPageData(data));
         // showSearchResultsHeader(data);
         // showSearchResultsHeader(data);
 
+        betterGenerator(data);
         goPrevNextPage(showSearchResultsHeader(data));
 
-        betterGenerator(data);
+
 
     });
 }
 
 async function ssApiCall(userSearchQ, pageNum, resultsPerPage) {
-    let editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&redirectResponse=minimal&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
+    resultsPerPage = document.getElementById("per-page");
+    let editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
     const response = await fetch(editedUrl, options);
-    ssApiData = await response.json();
+    let ssApiData = await response.json();
     return ssApiData;
 }
 
 function clearProductGrid() {
+    paginationContainer.innerHTML = "";
     productGrid.innerHTML = "";
 }
+
 
 
 
@@ -81,7 +180,7 @@ function betterGenerator(data) {
         .map((results) => {
             const msrp = results.msrp;
             const price = results.price;
-            let cardContent = `<p style="margin: 0;">${results.name}</p>`;
+            let cardContent = `<p style="margin: 0;"><span style="font-style: italic; font-weight: bold">${results.brand}:</span> ${results.name}</p>`;
             if (msrp > price) {
                 const percent = percentDiff(msrp, price);
                 cardContent += `
@@ -89,9 +188,9 @@ function betterGenerator(data) {
           <span>${percent}% OFF!</span>
         </p>
         Was: <span style="text-decoration: line-through">&#36;${msrp}</span>
-        Now: &#36;<span style="font-weight: bold">${price}</span>`;
+        Now: <span style="font-weight: bold">&#36;${price}</span>`;
             } else {
-                cardContent += `&#36;<span style="font-weight: bold">${price}</span>`;
+                cardContent += `&#36;<span style="font-weight: bold;">${price}</span>`;
             }
             return `    
       <div class="card-container">
@@ -106,12 +205,13 @@ function betterGenerator(data) {
     `;
         })
         .join("");
-    attachAddToCart();
+    attachAddToCartV2(data);
     paginationContainer.scrollIntoView({behavior: 'smooth'});
 }
 
 function goPrevNextPage(searchAndPageInfoArray) {
     var pagination = searchAndPageInfoArray[0];
+    var perPage = pagination.perPage;
     var searchResults = searchAndPageInfoArray[1];
 
     let prevButton = document.getElementsByClassName("prev-page-button");
@@ -127,7 +227,7 @@ function goPrevNextPage(searchAndPageInfoArray) {
             toggleVisibility(nextButton[i]);
             // Check for an addEventListener
             nextButton[i].addEventListener("click", () =>{
-                fullSend(searchResults, pagination.nextPage, resultsPerPage)
+                fullSend(searchResults, pagination.nextPage, perPage)
             });
         }
     }
@@ -139,7 +239,7 @@ function goPrevNextPage(searchAndPageInfoArray) {
             toggleVisibility(prevButton[i]);
             // Check for an addEventListener
             prevButton[i].addEventListener("click", () =>{
-                fullSend(searchResults, pagination.previousPage, resultsPerPage)
+                fullSend(searchResults, pagination.previousPage, perPage)
             });
         }
     }
@@ -162,22 +262,50 @@ function toggleVisibility(id) {
     }
 }
 
+function activePageLinks(data) {
+    var paginatedLinks = "";
+    const currentPage = data.pagination.currentPage;
+    const totalPages = data.pagination.totalPages;
+
+    // Determine the start and end pages for the pagination links
+    let startPage = Math.floor((currentPage - 1) / 15) * 15 + 1;
+    let endPage = Math.min(startPage + 14, totalPages);
+
+    // Add the links to the paginatedLinks variable
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === currentPage) {
+            paginatedLinks += ` <a style="margin: 3px"><span class="page-num active" data-id="${i}">${i}</span></a>`;
+        } else {
+            paginatedLinks += `<a style="margin: 3px" class="page-num" data-id="${i}">${i}</a> `;
+        }
+    }
+
+    // Add the "..." link if necessary
+    if (endPage < totalPages) {
+        paginatedLinks += `<a style="margin: 3px" class="page-num" data-id="${endPage + 1}">...</a>`;
+    }
+
+    return paginatedLinks;
+}
+
+
 function showSearchResultsHeader(data) {
+
     const pagination = data.pagination;
     const breadcrumbs = data.breadcrumbs[0].filterValue;
 
-    var paginatedLinks = ``;
+    // var paginatedLinks = ``;
+    //
+    // for (let i = 1; i <= pagination.totalPages; i++) {
+    //     paginatedLinks += `<a data-id="page-${i}" href="#" style="margin: 10px">${i}</a>`;
+    //     if (i % 10 === 0) {
+    //         paginatedLinks += `<a data-id="page-${i}" style="margin: 3px ">...</a><a style="margin: 3px;" href="#">&#62;</a>`
+    //         break;
+    //     }
+    //
+    // }
 
-    for (let i = 1; i <= pagination.totalPages; i++) {
-        paginatedLinks += `<a href="#" style="margin: 10px">${i}</a>`;
-        if (i % 10 === 0) {
-            paginatedLinks += `<a style="margin: 3px">...</a><a style="margin: 3px;" href="#">&#62;</a>`
-            break;
-        }
-
-    }
-
-
+    var paginatedLinks = activePageLinks(data);
 
     const searchResultsHeader = `
     <h3 id="results-header" style="font-family: Knewave, sans-serif; margin: 35px 0;">
@@ -205,6 +333,30 @@ function showSearchResultsHeader(data) {
     // let collectivePageSearchInfo = [pagination, breadcrumbs];
     // goPrevNextPage(collectivePageSearchInfo)
 
+    const pageLink = document.querySelectorAll('.page-num');
+    pageLink.forEach((link, i) =>{
+        link.addEventListener('click', () =>{
+            // console.log(link[0]);
+            if (link.innerText !== "...") {
+                console.log(i);
+                console.log("found it?")
+                console.log(link.innerHTML.toString())
+                fullSend(data.breadcrumbs[0].filterValue, link.innerText, data.pagination.perPage);
+
+            } else {
+                console.log(i);
+                // const nextPage = data.pagination.currentPage + pagination.nextMultiple;
+                fullSend(data.breadcrumbs[0].filterValue, ((parseInt(pageLink[14].innerHTML) - (data.pagination.currentPage)) + (data.pagination.currentPage + 1)), data.pagination.perPage);
+            }
+        })
+    })
+
     return [pagination, breadcrumbs];
 
+}
+
+function updateSelectedPerPage(selectedItem) {
+    var selectedValue = selectedItem.textContent;
+    document.getElementById("selected-value").textContent = selectedValue;
+    return selectedValue;
 }

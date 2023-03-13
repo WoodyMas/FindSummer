@@ -41,13 +41,28 @@
 }
 
 .add-to-cart-button {
-    color: black;
-    border-radius: 5px;
+    /*color: black;*/
+    /*border-radius: 5px;*/
+    /*width: 75%;*/
+    /*padding: 3%;*/
+    /*border: solid 1px silver;*/
+    /*background-image: linear-gradient(to bottom, rgb(252, 252, 247), rgb(255, 231, 126));*/
+    /*margin: 8px 0;*/
+
+    color: white;
+    background: orange;
     width: 75%;
     padding: 3%;
-    border: solid 1px silver;
-    background-image: linear-gradient(to bottom, rgb(252, 252, 247), rgb(255, 231, 126));
     margin: 8px 0;
+    border: none;
+    border-radius: 30px;
+}
+
+.add-to-cart-button:hover {
+    /*transition: all 0.3s ease-in-out;*/
+    /*background: white;*/
+    /*color: orange;*/
+    transform: scale(1.03);
 }
 
 .inner-card {

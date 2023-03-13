@@ -11,11 +11,16 @@ const baseUrl = `https://${SEARCHSPRING_SITE_ID}.a.searchspring.io/api/search/se
 let productGrid = document.getElementById("product-grid");
 let paginationContainer = document.querySelector(".pagination-container");
 let clickMeDiv = document.getElementById("click-me-div");
-let clickMeDivButtons = clickMeDiv.querySelectorAll("button");
+let clickMeDivButtons = clickMeDiv.querySelectorAll(".top-button");
 const options = {method: 'GET', headers: {accept: 'application/json'}};
 let searchInput = document.getElementById("search-input");
 let searchIcon = document.getElementById("input-search-icon");
 let resultsPerPage = document.getElementById("per-page").innerText;
+
+////////////////////////////////////////////////////////////////////////
+// Cart html variables
+let cart = document.getElementById('cart-div');
+////////////////////////////////////////////////////////////////////////
 
 const paginationData = (data) => {
     let pageData = {
@@ -80,17 +85,25 @@ function attachAddToCartV2(data) {
 
             const relativeIndex = (currentPage - 1) * perPage + i + 1;
             console.log(`Relative index: ${relativeIndex}`);
+            console.log(`Index to generated display: ${i}`);
 
-            return [{currentPage, perPage, totalPages, totalResults, begin, end}]
+            // return [{currentPage, perPage, totalPages, totalResults, begin, end}]
+            return [{index: i, relativeIndex: relativeIndex, perPage, filterVale: data.breadcrumbs[0].filterValue, pageNum: pageNum}]
         }
 
         button.addEventListener("click", () => {
-            console.log(getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults));;
+            console.log(getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults));
+            let cartItem = getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults);
             cartSize.innerText++;
+            // localStorage.setItem("cartItem", cartItem);
+
+            // cartGenerator(cartItem);
         });
     });
 
 }
+
+
 
 function cartItemRetriever(arrObj) {
     // cartItem( URL, index, resultsPerPage, searchQuery, pageNum)
@@ -107,33 +120,38 @@ function quickItemsView() {
     clickMeDivButtons.forEach(button =>{
         button.addEventListener('click', () =>{
             console.log(button.getAttribute('data-id'))
-            fullSend(button.getAttribute('data-id'), 1, 24);
+            fullSend(button.getAttribute('data-id'), 1, resultsPerPage);
         })
     })
 }
 
 searchInput.addEventListener('keydown', (ev) => {
     if (ev.key === "Enter") {
-       let searchQ = searchInput.value;
-       let pageNum = 1;
-
-        let resultsPerPage = 13;
-
-        fullSend(searchQ, pageNum, 24);
+        if (searchInput.value.trim() !== "") {
+            // toggleVisibility(productGrid);
+            let searchQ = searchInput.value;
+            let pageNum = 1;
+            fullSend(searchQ, pageNum, resultsPerPage);
+        }
     }
 });
 
-searchIcon.addEventListener('click', () => {
 
+searchIcon.addEventListener('click', () => {
+    if (searchInput.value.trim() !== "") {
+        // toggleVisibility(productGrid)
         let searchQ = searchInput.value;
         let pageNum = 1;
-        let resultsPerPage = document.getElementById("per-page");
-
         fullSend(searchQ, pageNum, resultsPerPage);
-
+    }
 });
 
 function fullSend(userSearchQ, pageNum, resultsPerPage) {
+    if (productGrid.style.display === "none") {
+        toggleVisibility(productGrid);
+        productGrid.style.display = "grid";
+
+    }
     let importantDetails = [];
     resetDefaults();
 
@@ -154,12 +172,36 @@ function fullSend(userSearchQ, pageNum, resultsPerPage) {
 }
 
 async function ssApiCall(userSearchQ, pageNum, resultsPerPage) {
-    resultsPerPage = document.getElementById("per-page");
+    // resultsPerPage = document.getElementById("per-page");
     let editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
     const response = await fetch(editedUrl, options);
     let ssApiData = await response.json();
     return ssApiData;
 }
+
+async function quickFetch(index, perPage ,userSearchQ, pageNum) {
+    // Must be index in relation to pageNumber, NOT item count!!
+    let url = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${perPage}`
+    const response = await fetch(url, options)
+        .then(resp => resp.json())
+        .then(resp =>{
+            console.log(resp.results[index]);
+            return resp.results[index];
+        })
+
+    // let quickData = await response.json();
+    // return quickData;
+}
+
+//fetch(`${baseUrl_Test}&resultsFormat=native&q=sale&page=4&resultsPerPage=24`, options)
+//     .then(response => response.json())
+//     .then(response => {
+//         console.log(response.results[/* INDEX */ 0]);
+//
+//     })
+//     .catch(err => console.error(err));
+//
+// // cartItem( URL, index, resultsPerPage, searchQuery, pageNum)
 
 function clearProductGrid() {
     paginationContainer.innerHTML = "";
@@ -207,6 +249,37 @@ function betterGenerator(data) {
         .join("");
     attachAddToCartV2(data);
     paginationContainer.scrollIntoView({behavior: 'smooth'});
+}
+
+function cartGenerator(item) {
+    cart.innerHTML = item.map((results) =>{
+        // const cartThumbnail = args.
+        const msrp = results.msrp;
+        const price = results.price;
+        let cardContent = `<p style="margin: 0;"><span style="font-style: italic; font-weight: bold">${results.brand}:</span> ${results.name}</p>`;
+        if (msrp > price) {
+            const percent = percentDiff(msrp, price);
+            cardContent += `
+        <p style="font-weight: bold; color: red; margin: 0;">
+          <span>${percent}% OFF!</span>
+        </p>
+        Was: <span style="text-decoration: line-through">&#36;${msrp}</span>
+        Now: <span style="font-weight: bold">&#36;${price}</span>`;
+        } else {
+            cardContent += `&#36;<span style="font-weight: bold;">${price}</span>`;
+        }
+        return `    
+      <div class="card-container">
+        <div class="product-card card">
+          <img src="${results.thumbnailImageUrl}" onerror="this.src='img/ai-logo.png'">
+          <div class="inner-card">
+            ${cardContent}
+          </div>
+          <button class="add-to-cart-button">Add To Cart</button>
+        </div>
+      </div>
+    `;
+    })
 }
 
 function goPrevNextPage(searchAndPageInfoArray) {
@@ -357,6 +430,15 @@ function showSearchResultsHeader(data) {
 
 function updateSelectedPerPage(selectedItem) {
     var selectedValue = selectedItem.textContent;
-    document.getElementById("selected-value").textContent = selectedValue;
-    return selectedValue;
+    document.getElementById("per-page").innerText = selectedValue;
+    resultsPerPage = parseInt(selectedValue)
+    return resultsPerPage;
 }
+
+
+
+// function updatePerPage(data) {
+//     if ()
+//
+//     fullSend(data.breadcrumbs[0].filterValue, data.pagination.currentPage, data)
+// }

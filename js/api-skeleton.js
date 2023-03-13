@@ -1,12 +1,5 @@
-
-// https://siteid.a.searchspring.io/api/search/search.json?siteId=scmq7n&resultsFormat=native&q=jeans&redirectResponse=minimal&page=1&resultsPerPage=24&newKey=New%20Value'
-const SEARCHSPRING_SITE_ID = "scmq7n";
+const SEARCHSPRING_SITE_ID = SITE_ID_KEY;
 const baseUrl = `https://${SEARCHSPRING_SITE_ID}.a.searchspring.io/api/search/search.json?&siteId=${SEARCHSPRING_SITE_ID}`;
-// let editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&redirectResponse=minimal&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
-
-
-// variable to store API data
-// let ssApiData = [];
 
 let productGrid = document.getElementById("product-grid");
 let paginationContainer = document.querySelector(".pagination-container");
@@ -19,7 +12,7 @@ let resultsPerPage = document.getElementById("per-page").innerText;
 
 ////////////////////////////////////////////////////////////////////////
 // Cart html variables
-let cart = document.getElementById('cart-div');
+// let cart = document.getElementById('cart-div');
 ////////////////////////////////////////////////////////////////////////
 
 const paginationData = (data) => {
@@ -54,13 +47,9 @@ const results = (data) => {
 }
 
 
-function replaceSpacesWithAsterisks(str) {
-    return str.replace(/ /g, '*');
-}
+
 (function () {
-    // console.log(clickMeDivButtons.length);
     quickItemsView();
-    // fullSend('Sale', 1, 24);
 
 })();
 
@@ -69,7 +58,6 @@ function resetDefaults() {
 }
 
 function attachAddToCartV2(data) {
-    /* Add your add to cart logic here */
     let addToCartButton = document.querySelectorAll(".add-to-cart-button");
     let cartSize = document.getElementById("cart-size");
 
@@ -79,7 +67,6 @@ function attachAddToCartV2(data) {
             const currentPage = pageNum;
             const begin = (currentPage - 1) * perPage + 1;
             const end = Math.min(begin + perPage - 1, totalResults);
-            // const previousPage = currentPage - 1 > 0 ? currentPage - 1 : 0;
 
             console.log(`Showing items ${begin}-${end} of ${totalResults}. Page ${currentPage} of ${totalPages}.`);
 
@@ -87,7 +74,6 @@ function attachAddToCartV2(data) {
             console.log(`Relative index: ${relativeIndex}`);
             console.log(`Index to generated display: ${i}`);
 
-            // return [{currentPage, perPage, totalPages, totalResults, begin, end}]
             return [{index: i, relativeIndex: relativeIndex, perPage, filterVale: data.breadcrumbs[0].filterValue, pageNum: pageNum}]
         }
 
@@ -95,26 +81,10 @@ function attachAddToCartV2(data) {
             console.log(getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults));
             let cartItem = getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults);
             cartSize.innerText++;
-            // localStorage.setItem("cartItem", cartItem);
-
-            // cartGenerator(cartItem);
         });
     });
 
 }
-
-
-
-function cartItemRetriever(arrObj) {
-    // cartItem( URL, index, resultsPerPage, searchQuery, pageNum)
-
-
-
-}
-
-
-
-
 
 function quickItemsView() {
     clickMeDivButtons.forEach(button =>{
@@ -150,7 +120,6 @@ function fullSend(userSearchQ, pageNum, resultsPerPage) {
     if (productGrid.style.display === "none") {
         toggleVisibility(productGrid);
         productGrid.style.display = "grid";
-
     }
     let importantDetails = [];
     resetDefaults();
@@ -159,49 +128,17 @@ function fullSend(userSearchQ, pageNum, resultsPerPage) {
         importantDetails = [results(data), paginationData(data), filterValueSearch(data)];
         console.log(importantDetails);
         console.log(data);
-        // console.log(getItemAndPageData(data));
-        // showSearchResultsHeader(data);
-        // showSearchResultsHeader(data);
-
         betterGenerator(data);
-        goPrevNextPage(showSearchResultsHeader(data));
-
-
-
+        cyclePage(showSearchResultsHeader(data));
     });
 }
 
 async function ssApiCall(userSearchQ, pageNum, resultsPerPage) {
-    // resultsPerPage = document.getElementById("per-page");
     let editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
     const response = await fetch(editedUrl, options);
     let ssApiData = await response.json();
     return ssApiData;
 }
-
-async function quickFetch(index, perPage ,userSearchQ, pageNum) {
-    // Must be index in relation to pageNumber, NOT item count!!
-    let url = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${perPage}`
-    const response = await fetch(url, options)
-        .then(resp => resp.json())
-        .then(resp =>{
-            console.log(resp.results[index]);
-            return resp.results[index];
-        })
-
-    // let quickData = await response.json();
-    // return quickData;
-}
-
-//fetch(`${baseUrl_Test}&resultsFormat=native&q=sale&page=4&resultsPerPage=24`, options)
-//     .then(response => response.json())
-//     .then(response => {
-//         console.log(response.results[/* INDEX */ 0]);
-//
-//     })
-//     .catch(err => console.error(err));
-//
-// // cartItem( URL, index, resultsPerPage, searchQuery, pageNum)
 
 function clearProductGrid() {
     paginationContainer.innerHTML = "";
@@ -251,40 +188,8 @@ function betterGenerator(data) {
     paginationContainer.scrollIntoView({behavior: 'smooth'});
 }
 
-function cartGenerator(item) {
-    cart.innerHTML = item.map((results) =>{
-        // const cartThumbnail = args.
-        const msrp = results.msrp;
-        const price = results.price;
-        let cardContent = `<p style="margin: 0;"><span style="font-style: italic; font-weight: bold">${results.brand}:</span> ${results.name}</p>`;
-        if (msrp > price) {
-            const percent = percentDiff(msrp, price);
-            cardContent += `
-        <p style="font-weight: bold; color: red; margin: 0;">
-          <span>${percent}% OFF!</span>
-        </p>
-        Was: <span style="text-decoration: line-through">&#36;${msrp}</span>
-        Now: <span style="font-weight: bold">&#36;${price}</span>`;
-        } else {
-            cardContent += `&#36;<span style="font-weight: bold;">${price}</span>`;
-        }
-        return `    
-      <div class="card-container">
-        <div class="product-card card">
-          <img src="${results.thumbnailImageUrl}" onerror="this.src='img/ai-logo.png'">
-          <div class="inner-card">
-            ${cardContent}
-          </div>
-          <button class="add-to-cart-button">Add To Cart</button>
-        </div>
-      </div>
-    `;
-    })
-}
-
-function goPrevNextPage(searchAndPageInfoArray) {
+function cyclePage(searchAndPageInfoArray) {
     var pagination = searchAndPageInfoArray[0];
-    var perPage = pagination.perPage;
     var searchResults = searchAndPageInfoArray[1];
 
     let prevButton = document.getElementsByClassName("prev-page-button");
@@ -300,7 +205,7 @@ function goPrevNextPage(searchAndPageInfoArray) {
             toggleVisibility(nextButton[i]);
             // Check for an addEventListener
             nextButton[i].addEventListener("click", () =>{
-                fullSend(searchResults, pagination.nextPage, perPage)
+                fullSend(searchResults, pagination.nextPage, resultsPerPage)
             });
         }
     }
@@ -312,7 +217,7 @@ function goPrevNextPage(searchAndPageInfoArray) {
             toggleVisibility(prevButton[i]);
             // Check for an addEventListener
             prevButton[i].addEventListener("click", () =>{
-                fullSend(searchResults, pagination.previousPage, perPage)
+                fullSend(searchResults, pagination.previousPage, resultsPerPage)
             });
         }
     }
@@ -367,17 +272,6 @@ function showSearchResultsHeader(data) {
     const pagination = data.pagination;
     const breadcrumbs = data.breadcrumbs[0].filterValue;
 
-    // var paginatedLinks = ``;
-    //
-    // for (let i = 1; i <= pagination.totalPages; i++) {
-    //     paginatedLinks += `<a data-id="page-${i}" href="#" style="margin: 10px">${i}</a>`;
-    //     if (i % 10 === 0) {
-    //         paginatedLinks += `<a data-id="page-${i}" style="margin: 3px ">...</a><a style="margin: 3px;" href="#">&#62;</a>`
-    //         break;
-    //     }
-    //
-    // }
-
     var paginatedLinks = activePageLinks(data);
 
     const searchResultsHeader = `
@@ -391,20 +285,14 @@ function showSearchResultsHeader(data) {
     <div>${paginatedLinks}</div>
 
     <div class="d-flex" style="justify-content: center; text-align: center">
-        <button class="prev-page-button" disabled="disabled" style="display: none; height: 30px; border-radius: 12px; align-items: center">Previous Page</button>
-        <button class="next-page-button" disabled="disabled" style="display: none; height: 30px; border-radius: 12px; align-items: center">Next Page</button>
-    </div>
-        
-<!--        <div>-->
-<!--        </div>-->
-  `;
+        <button class="prev-page-button" disabled="disabled" style="display: none; height: 30px; border-radius: 12px; align-items: center">&#x2190;</button>
+        <button class="next-page-button" disabled="disabled" style="display: none; height: 30px; border-radius: 12px; align-items: center">&rarr;</button>
+    </div>`;
 
     const paginationContainers = document.querySelectorAll('.pagination-container');
     paginationContainers.forEach(container => {
         container.innerHTML = searchResultsHeader;
     });
-    // let collectivePageSearchInfo = [pagination, breadcrumbs];
-    // goPrevNextPage(collectivePageSearchInfo)
 
     const pageLink = document.querySelectorAll('.page-num');
     pageLink.forEach((link, i) =>{
@@ -414,18 +302,16 @@ function showSearchResultsHeader(data) {
                 console.log(i);
                 console.log("found it?")
                 console.log(link.innerHTML.toString())
-                fullSend(data.breadcrumbs[0].filterValue, link.innerText, data.pagination.perPage);
+                fullSend(data.breadcrumbs[0].filterValue, link.innerText, resultsPerPage);
 
             } else {
                 console.log(i);
                 // const nextPage = data.pagination.currentPage + pagination.nextMultiple;
-                fullSend(data.breadcrumbs[0].filterValue, ((parseInt(pageLink[14].innerHTML) - (data.pagination.currentPage)) + (data.pagination.currentPage + 1)), data.pagination.perPage);
+                fullSend(data.breadcrumbs[0].filterValue, ((parseInt(pageLink[14].innerHTML) - (data.pagination.currentPage)) + (data.pagination.currentPage + 1)), resultsPerPage);
             }
-        })
-    })
-
+        });
+    });
     return [pagination, breadcrumbs];
-
 }
 
 function updateSelectedPerPage(selectedItem) {
@@ -434,11 +320,3 @@ function updateSelectedPerPage(selectedItem) {
     resultsPerPage = parseInt(selectedValue)
     return resultsPerPage;
 }
-
-
-
-// function updatePerPage(data) {
-//     if ()
-//
-//     fullSend(data.breadcrumbs[0].filterValue, data.pagination.currentPage, data)
-// }

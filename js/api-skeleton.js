@@ -116,25 +116,31 @@ searchIcon.addEventListener('click', () => {
     }
 });
 
+// This is the all-encompassing API Calling Behemoth
 function fullSend(userSearchQ, pageNum, resultsPerPage) {
+    // This will toggle the product-grid so that it will be displayed as a grid, and not invisible
     if (productGrid.style.display === "none") {
         toggleVisibility(productGrid);
         productGrid.style.display = "grid";
     }
-    let importantDetails = [];
+    // This is useful in the event other API calls are made (changing pages, searching new items, etc)
+    // This clears the product-grid so that old search items aren't populating
     resetDefaults();
 
+    // This is the original API calling function this method is built on.
     ssApiCall(userSearchQ, pageNum, resultsPerPage).then((data) =>{
-        importantDetails = [results(data), paginationData(data), filterValueSearch(data)];
-        console.log(importantDetails);
+        console.log([results(data), paginationData(data), filterValueSearch(data)]);
         console.log(data);
+        // This method generates each product into a card in product-grid
         betterGenerator(data);
+        // cyclePage will allow the viewer to go to previous/next pages as long as there is a page to go to
         cyclePage(showSearchResultsHeader(data));
     });
 }
 
+
 async function ssApiCall(userSearchQ, pageNum, resultsPerPage) {
-    let editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
+    const editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
     const response = await fetch(editedUrl, options);
     let ssApiData = await response.json();
     return ssApiData;
@@ -240,6 +246,7 @@ function toggleVisibility(id) {
     }
 }
 
+// This adds the page number links for direct access to a specific page
 function activePageLinks(data) {
     var paginatedLinks = "";
     const currentPage = data.pagination.currentPage;
@@ -266,7 +273,7 @@ function activePageLinks(data) {
     return paginatedLinks;
 }
 
-
+// This generates the "Showing {number} of {number} for {search query}
 function showSearchResultsHeader(data) {
 
     const pagination = data.pagination;
@@ -274,10 +281,10 @@ function showSearchResultsHeader(data) {
 
     var paginatedLinks = activePageLinks(data);
 
+    // This is the text for the search result
     const searchResultsHeader = `
     <h3 id="results-header" style="font-family: Knewave, sans-serif; margin: 35px 0;">
-      Showing
-      <span>${pagination.currentPage}</span>
+      Showing <span>${pagination.currentPage}</span>
       of <span id="ending-page-number">${pagination.totalPages}</span>
       for <span data-id="searched-item">${breadcrumbs}</span>
     </h3>
@@ -294,19 +301,17 @@ function showSearchResultsHeader(data) {
         container.innerHTML = searchResultsHeader;
     });
 
+    // This assigns the links to a variable: pageLink and waits for a click event
     const pageLink = document.querySelectorAll('.page-num');
     pageLink.forEach((link, i) =>{
         link.addEventListener('click', () =>{
-            // console.log(link[0]);
+            // if the link isn't "..."
             if (link.innerText !== "...") {
-                console.log(i);
-                console.log("found it?")
-                console.log(link.innerHTML.toString())
+                // we'll make an API call taking the last used search value, the value of the link clicked, and the last updated resultsPerPage
                 fullSend(data.breadcrumbs[0].filterValue, link.innerText, resultsPerPage);
-
+            // otherwise if it is "..."
             } else {
-                console.log(i);
-                // const nextPage = data.pagination.currentPage + pagination.nextMultiple;
+                // we'll make an API call taking the last search value, doing some math to find out what the next value relative to the current page is, and getting those results with the last updated resultsPerPage
                 fullSend(data.breadcrumbs[0].filterValue, ((parseInt(pageLink[14].innerHTML) - (data.pagination.currentPage)) + (data.pagination.currentPage + 1)), resultsPerPage);
             }
         });
@@ -314,6 +319,7 @@ function showSearchResultsHeader(data) {
     return [pagination, breadcrumbs];
 }
 
+// This takes the value of the "Results Per Page" select tag and updates the variable "resultsPerPage"
 function updateSelectedPerPage(selectedItem) {
     var selectedValue = selectedItem.textContent;
     document.getElementById("per-page").innerText = selectedValue;

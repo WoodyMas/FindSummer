@@ -30,19 +30,19 @@ const paginationData = (data) => {
     totalResults: data.pagination.totalResults
     };
 
-    console.log(pageData);
+    // console.log(pageData);
     return pageData;
 }
 
 const filterValueSearch = (data) => {
     let searchValue = data.breadcrumbs[0].filterValue;
-    console.log(searchValue);
+    // console.log(searchValue);
     return searchValue;
 }
 
 const results = (data) => {
     let results = data.results;
-    console.log(results);
+    // console.log(results);
     return results;
 }
 
@@ -68,17 +68,17 @@ function attachAddToCartV2(data) {
             const begin = (currentPage - 1) * perPage + 1;
             const end = Math.min(begin + perPage - 1, totalResults);
 
-            console.log(`Showing items ${begin}-${end} of ${totalResults}. Page ${currentPage} of ${totalPages}.`);
+            // console.log(`Showing items ${begin}-${end} of ${totalResults}. Page ${currentPage} of ${totalPages}.`);
 
             const relativeIndex = (currentPage - 1) * perPage + i + 1;
-            console.log(`Relative index: ${relativeIndex}`);
-            console.log(`Index to generated display: ${i}`);
+            // console.log(`Relative index: ${relativeIndex}`);
+            // console.log(`Index to generated display: ${i}`);
 
             return [{index: i, relativeIndex: relativeIndex, perPage, filterVale: data.breadcrumbs[0].filterValue, pageNum: pageNum}]
         }
 
         button.addEventListener("click", () => {
-            console.log(getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults));
+            // console.log(getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults));
             let cartItem = getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults);
             cartSize.innerText++;
         });
@@ -89,7 +89,7 @@ function attachAddToCartV2(data) {
 function quickItemsView() {
     clickMeDivButtons.forEach(button =>{
         button.addEventListener('click', () =>{
-            console.log(button.getAttribute('data-id'))
+            // console.log(button.getAttribute('data-id'))
             fullSend(button.getAttribute('data-id'), 1, resultsPerPage);
         })
     })
@@ -129,8 +129,8 @@ function fullSend(userSearchQ, pageNum, resultsPerPage) {
 
     // This is the original API calling function this method is built on.
     ssApiCall(userSearchQ, pageNum, resultsPerPage).then((data) =>{
-        console.log([results(data), paginationData(data), filterValueSearch(data)]);
-        console.log(data);
+        // console.log([results(data), paginationData(data), filterValueSearch(data)]);
+        // console.log(data);
         // This method generates each product into a card in product-grid
         betterGenerator(data);
         // cyclePage will allow the viewer to go to previous/next pages as long as there is a page to go to
@@ -141,9 +141,16 @@ function fullSend(userSearchQ, pageNum, resultsPerPage) {
 
 async function ssApiCall(userSearchQ, pageNum, resultsPerPage) {
     const editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
-    const response = await fetch(editedUrl, options);
-    let ssApiData = await response.json();
-    return ssApiData;
+    try {
+        const response = await fetch(editedUrl, options);
+        if (!response.ok) {
+            throw new Error("Img not found")
+        }
+        let ssApiData = await response.json();
+        return ssApiData;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 function clearProductGrid() {
@@ -151,7 +158,12 @@ function clearProductGrid() {
     productGrid.innerHTML = "";
 }
 
-
+function imageExists(url) {
+    const http = new XMLHttpRequest();
+    http.open("HEAD", url, false);
+    http.send();
+    return http.status !== 404;
+}
 
 
 function betterGenerator(data) {
@@ -161,10 +173,13 @@ function betterGenerator(data) {
         return Math.round(percentDiff);
     }
 
+
+
     document.getElementById("product-grid").innerHTML = data.results
         .map((results) => {
             const msrp = results.msrp;
             const price = results.price;
+            const imageThumbnail = imageExists(results.thumbnailImageUrl) ? results.thumbnailImageUrl : "img/ai-logo.png";
             let cardContent = `<p style="margin: 0;"><span style="font-style: italic; font-weight: bold">${results.brand}:</span> ${results.name}</p>`;
             if (msrp > price) {
                 const percent = percentDiff(msrp, price);
@@ -180,7 +195,7 @@ function betterGenerator(data) {
             return `    
       <div class="card-container">
         <div class="product-card card">
-          <img src="${results.thumbnailImageUrl}" onerror="this.src='img/ai-logo.png'">
+          <img src="${imageThumbnail}">
           <div class="inner-card">
             ${cardContent}
           </div>
@@ -289,7 +304,7 @@ function showSearchResultsHeader(data) {
       for <span data-id="searched-item">${breadcrumbs}</span>
     </h3>
 
-    <div>${paginatedLinks}</div>
+    <div class="link-div">${paginatedLinks}</div>
 
     <div class="d-flex" style="justify-content: center; text-align: center">
         <button class="prev-page-button" disabled="disabled" style="display: none; height: 30px; border-radius: 12px; align-items: center">&#x2190;</button>

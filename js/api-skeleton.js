@@ -11,41 +11,7 @@ let searchIcon = document.getElementById("input-search-icon");
 let resultsPerPage = document.getElementById("per-page").innerText;
 
 ////////////////////////////////////////////////////////////////////////
-// Cart html variables
-// let cart = document.getElementById('cart-div');
 ////////////////////////////////////////////////////////////////////////
-
-const paginationData = (data) => {
-    let pageData = {
-    // beginning count of items NOT pages (starting at 1)
-    begin: data.pagination.begin,
-    // Ending count of items NOT pages (if there are 12 results, the end is 13)
-    end: data.pagination.end,
-    previousPage: data.pagination.previousPage,
-    currentPage: data.pagination.currentPage,
-    nextPage: data.pagination.nextPage,
-    totalPages: data.pagination.totalPages,
-    perPage: data.pagination.perPage,
-    defaultPerPage: data.pagination.defaultPerPage,
-    totalResults: data.pagination.totalResults
-    };
-
-    // console.log(pageData);
-    return pageData;
-}
-
-const filterValueSearch = (data) => {
-    let searchValue = data.breadcrumbs[0].filterValue;
-    // console.log(searchValue);
-    return searchValue;
-}
-
-const results = (data) => {
-    let results = data.results;
-    // console.log(results);
-    return results;
-}
-
 
 
 (function () {
@@ -68,17 +34,12 @@ function attachAddToCartV2(data) {
             const begin = (currentPage - 1) * perPage + 1;
             const end = Math.min(begin + perPage - 1, totalResults);
 
-            // console.log(`Showing items ${begin}-${end} of ${totalResults}. Page ${currentPage} of ${totalPages}.`);
-
             const relativeIndex = (currentPage - 1) * perPage + i + 1;
-            // console.log(`Relative index: ${relativeIndex}`);
-            // console.log(`Index to generated display: ${i}`);
 
             return [{index: i, relativeIndex: relativeIndex, perPage, filterVale: data.breadcrumbs[0].filterValue, pageNum: pageNum}]
         }
 
         button.addEventListener("click", () => {
-            // console.log(getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults));
             let cartItem = getItemIndex(data.pagination.currentPage, data.pagination.perPage, data.pagination.totalResults);
             cartSize.innerText++;
         });
@@ -89,7 +50,6 @@ function attachAddToCartV2(data) {
 function quickItemsView() {
     clickMeDivButtons.forEach(button =>{
         button.addEventListener('click', () =>{
-            // console.log(button.getAttribute('data-id'))
             fullSend(button.getAttribute('data-id'), 1, resultsPerPage);
         })
     })
@@ -98,7 +58,6 @@ function quickItemsView() {
 searchInput.addEventListener('keydown', (ev) => {
     if (ev.key === "Enter") {
         if (searchInput.value.trim() !== "") {
-            // toggleVisibility(productGrid);
             let searchQ = searchInput.value;
             let pageNum = 1;
             fullSend(searchQ, pageNum, resultsPerPage);
@@ -109,7 +68,6 @@ searchInput.addEventListener('keydown', (ev) => {
 
 searchIcon.addEventListener('click', () => {
     if (searchInput.value.trim() !== "") {
-        // toggleVisibility(productGrid)
         let searchQ = searchInput.value;
         let pageNum = 1;
         fullSend(searchQ, pageNum, resultsPerPage);
@@ -129,15 +87,12 @@ function fullSend(userSearchQ, pageNum, resultsPerPage) {
 
     // This is the original API calling function this method is built on.
     ssApiCall(userSearchQ, pageNum, resultsPerPage).then((data) =>{
-        // console.log([results(data), paginationData(data), filterValueSearch(data)]);
-        // console.log(data);
         // This method generates each product into a card in product-grid
         betterGenerator(data);
         // cyclePage will allow the viewer to go to previous/next pages as long as there is a page to go to
         cyclePage(showSearchResultsHeader(data));
     });
 }
-
 
 async function ssApiCall(userSearchQ, pageNum, resultsPerPage) {
     const editedUrl = `${baseUrl}&resultsFormat=native&q=${userSearchQ}&page=${pageNum}&resultsPerPage=${resultsPerPage}`;
@@ -158,14 +113,6 @@ function clearProductGrid() {
     productGrid.innerHTML = "";
 }
 
-function imageExists(url) {
-    const http = new XMLHttpRequest();
-    http.open("HEAD", url, false);
-    http.send();
-    return http.status !== 404;
-}
-
-
 function betterGenerator(data) {
     function percentDiff(msrp, price) {
         const diff = Math.abs(msrp - price);
@@ -173,13 +120,10 @@ function betterGenerator(data) {
         return Math.round(percentDiff);
     }
 
-
-
     document.getElementById("product-grid").innerHTML = data.results
         .map((results) => {
             const msrp = results.msrp;
             const price = results.price;
-            const imageThumbnail = imageExists(results.thumbnailImageUrl) ? results.thumbnailImageUrl : "img/ai-logo.png";
             let cardContent = `<p style="margin: 0;"><span style="font-style: italic; font-weight: bold">${results.brand}:</span> ${results.name}</p>`;
             if (msrp > price) {
                 const percent = percentDiff(msrp, price);
@@ -195,7 +139,7 @@ function betterGenerator(data) {
             return `    
       <div class="card-container">
         <div class="product-card card">
-          <img src="${imageThumbnail}">
+          <img src="${results.thumbnailImageUrl}" onerror="this.src='img/ai-logo.png'">
           <div class="inner-card">
             ${cardContent}
           </div>
@@ -215,7 +159,6 @@ function cyclePage(searchAndPageInfoArray) {
 
     let prevButton = document.getElementsByClassName("prev-page-button");
     let nextButton = document.getElementsByClassName("next-page-button");
-
 
     // Iterate through every button with class="next-page-button"
     for (let i = 0; i < nextButton.length; i++) {
@@ -253,7 +196,6 @@ function toggleDisabled(id) {
 }
 
 function toggleVisibility(id) {
-
     if (id.style.display === "none") {
         id.style.display = "block";
     } else {
@@ -279,7 +221,6 @@ function activePageLinks(data) {
             paginatedLinks += `<a style="margin: 3px" class="page-num" data-id="${i}">${i}</a> `;
         }
     }
-
     // Add the "..." link if necessary
     if (endPage < totalPages) {
         paginatedLinks += `<a style="margin: 3px" class="page-num" data-id="${endPage + 1}">...</a>`;

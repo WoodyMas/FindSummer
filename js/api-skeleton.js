@@ -1,4 +1,4 @@
-const SEARCHSPRING_SITE_ID = SITE_ID_KEY;
+const SEARCHSPRING_SITE_ID = "scmq7n";
 const baseUrl = `https://${SEARCHSPRING_SITE_ID}.a.searchspring.io/api/search/search.json?&siteId=${SEARCHSPRING_SITE_ID}`;
 
 let productGrid = document.getElementById("product-grid");

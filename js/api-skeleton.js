@@ -9,6 +9,7 @@ const options = {method: 'GET', headers: {accept: 'application/json'}};
 let searchInput = document.getElementById("search-input");
 let searchIcon = document.getElementById("input-search-icon");
 let resultsPerPage = document.getElementById("per-page").innerText;
+let currentPage = 1;
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -169,7 +170,7 @@ function cyclePage(searchAndPageInfoArray) {
             toggleVisibility(nextButton[i]);
             // Check for an addEventListener
             nextButton[i].addEventListener("click", () =>{
-                fullSend(searchResults, pagination.nextPage, resultsPerPage)
+                fullSend(searchResults, currentPage+1, resultsPerPage)
             });
         }
     }
@@ -181,9 +182,15 @@ function cyclePage(searchAndPageInfoArray) {
             toggleVisibility(prevButton[i]);
             // Check for an addEventListener
             prevButton[i].addEventListener("click", () =>{
-                fullSend(searchResults, pagination.previousPage, resultsPerPage)
+                fullSend(searchResults, currentPage-1, resultsPerPage)
             });
         }
+    }
+
+    if (currentPage > pagination.totalPages) {
+        document.getElementById("per-page").textContent = 12;
+        resultsPerPage = 12;
+        fullSend(searchResults, pagination.totalPages, resultsPerPage);
     }
 }
 
@@ -231,6 +238,7 @@ function activePageLinks(data) {
 
 // This generates the "Showing {number} of {number} for {search query}
 function showSearchResultsHeader(data) {
+    currentPage = data.pagination.currentPage;
 
     const pagination = data.pagination;
     const breadcrumbs = data.breadcrumbs[0].filterValue;
@@ -278,7 +286,14 @@ function showSearchResultsHeader(data) {
 // This takes the value of the "Results Per Page" select tag and updates the variable "resultsPerPage"
 function updateSelectedPerPage(selectedItem) {
     var selectedValue = selectedItem.textContent;
-    document.getElementById("per-page").innerText = selectedValue;
-    resultsPerPage = parseInt(selectedValue)
+    if (searchInput.value.trim() === "") {
+        document.getElementById("per-page").innerText = selectedValue;
+        resultsPerPage = parseInt(selectedValue);
+    } else {
+            document.getElementById("per-page").innerText = selectedValue;
+            resultsPerPage = parseInt(selectedValue);
+            fullSend(searchInput.value, currentPage, resultsPerPage);
+    }
+
     return resultsPerPage;
 }

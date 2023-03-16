@@ -1,7 +1,7 @@
 /* Refactored code for screens with min-width: 500px and max-width: 1180px */
 @media screen and (min-width: 300px) and (max-width: 800px) {
     body * {
-        max-width: 375px;
+        max-width: 100vw;
     }
 
     nav {

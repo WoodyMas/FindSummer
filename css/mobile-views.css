@@ -91,7 +91,7 @@
         display: none;
     }
 
-    .pagination-section div {
+    .pagination-section div:not(.dropdown) {
         margin: 10px 0 0 0;
     }
 
@@ -112,12 +112,16 @@
 
     /*}*/
 
-    .pagination-container {
+    section .pagination-container {
+        margin: 20px 0;
         display: flex;
         /*justify-content: center;*/
         flex-direction: column;
     }
 
+    .link-div {
+        margin: auto auto 7px auto;
+    }
 
     #results-header {
         text-align: center;
@@ -128,6 +132,7 @@
     .dropdown {
         justify-content: center;
         align-items: center;
+        margin: 0 0 auto 0;
         /*width: 80%;*/
     }
 

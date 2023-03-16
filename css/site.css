@@ -192,16 +192,33 @@ input[type="text"] {
     border-radius: 12px;
 }
 
+
 .hover-area:hover .overlay {
     backdrop-filter: blur(3px);
     background: rgba(0, 0, 0, 0.6);
 }
 
+#large-hero-scene .hover-area .top-button {
+    /*margin-top: 40%;*/
+    /*margin-left: 40%;*/
+
+    margin-top: calc((100% - 44px) / 2);
+    margin-left: calc((100% - 139px) / 2);
+
+}
+
+.smaller-hero .hover-area .top-button {
+    margin-top: calc((100% - 44px) / 2);
+    margin-left: calc((100% - 93px) / 2);
+}
+
 .top-button {
-    position: absolute;
     padding: 10px 30px;
-    margin-top: 45%;
-    margin-left: 35%;
+    position: absolute;
+    /*margin-top: 55%;*/
+    /*margin-left: 30%;*/
+    /*top: 50%;*/
+    /*left: 50%;*/
     border-radius: 30px;
     color: white;
     transition: all 0.3s ease-in-out;

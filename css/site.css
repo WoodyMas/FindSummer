@@ -18,20 +18,20 @@ footer {
 button:hover {
     cursor: pointer;
 }
-/* ******************************************************************************************************************
-                                                        Navbar
-/* ******************************************************************************************************************/
 
 nav {
-    padding: 10px 0;
     height: fit-content;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     border-bottom: 1px solid gray;
-    padding-bottom: 5px;
+    padding: 10px 0 5px 0;
     background: rgba(34, 37, 41, 1) ;
 }
+/* ******************************************************************************************************************
+                                                        Navbar
+/* ******************************************************************************************************************/
+
 
 .navbar-left img{
     margin-left: 12px;
@@ -49,7 +49,7 @@ nav {
 }
 
 .navbar-left,
-.navbar-right {
+.navbar-cart {
     flex-basis: 16%;
     display: flex;
     align-items: center;
@@ -61,19 +61,12 @@ nav {
     align-items: center;
 }
 
-input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-}
-
-.navbar-right {
-    padding-left: 10px;
+.navbar-cart {
+    /*padding-left: 10px;*/
     justify-content: center;
 }
 
-.navbar-right a {
+.navbar-cart a {
     background-color: #fff;
     color: #333;
     padding: 8px;
@@ -83,9 +76,17 @@ input[type="text"] {
     text-decoration: none;
 }
 
-.navbar-right p {
+.navbar-cart p {
     margin: 0;
 }
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+}
+
 
 /* search icon (magnifying glass) */
 .icon-rtl {
@@ -283,6 +284,10 @@ input[type="text"] {
 
 .page-num:active {
     text-decoration: none;
+}
+
+.pagination-section div {
+    margin: 10px 0;
 }
 
 .dropdown-menu {

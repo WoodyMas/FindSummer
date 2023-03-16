@@ -239,7 +239,7 @@ function showSearchResultsHeader(data) {
 
     // This is the text for the search result
     const searchResultsHeader = `
-    <h3 id="results-header" style="font-family: Knewave, sans-serif; margin: 35px 0;">
+    <h3 id="results-header" style="font-family: Knewave, sans-serif;">
       Showing <span>${pagination.currentPage}</span>
       of <span id="ending-page-number">${pagination.totalPages}</span>
       for <span data-id="searched-item">${breadcrumbs}</span>

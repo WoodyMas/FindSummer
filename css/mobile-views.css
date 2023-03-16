@@ -1,0 +1,154 @@
+/* Refactored code for screens with min-width: 500px and max-width: 1180px */
+@media screen and (min-width: 300px) and (max-width: 800px) {
+    body * {
+        max-width: 375px;
+    }
+
+    nav {
+        flex-wrap: wrap;
+    }
+
+    .navbar-container .navbar-center {}
+
+    .input-group {
+        margin: 0 3px 0 0;
+        width: 80%;
+    }
+
+    .navbar-container {
+        padding: 5px 0;
+        flex-wrap: wrap;
+        margin: 0;
+        justify-content: center;
+    }
+
+    .navbar-center {
+        justify-content: center;
+        align-items: center;
+        margin: 0;
+
+    }
+
+    .navbar-left {
+        /*display: none;*/
+        flex-grow: 1;
+        justify-content: center;
+        height: 30%;
+    }
+
+    /*.navbar-left,*/
+    .navbar-right,
+    .navbar-center {
+        flex-basis: auto;
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .navbar-right {
+        justify-content: flex-end;
+    }
+
+    .navbar-right a {
+        margin-left: 10px;
+    }
+
+    /*  //////////////////////////////////////////////////////////
+        Click Me Hero Scene media query adjustment
+        //////////////////////////////////////////////////////////
+    */
+
+    #header-wrapper {
+        height: 400px;
+    }
+
+    #click-me-div {
+        width: 100%;
+        /*height: 80%;*/
+    }
+
+    .ss-lite-header #click-me-div {
+        height: 100%;
+        width: 95%;
+        margin: 0;
+    }
+
+    .ss-lite-header {
+        width: max-content;
+        /*height: 200px;*/
+        height: 100%;
+
+    }
+
+    #app {
+        padding: 0;
+    }
+
+    section {
+        margin: 10px 0;
+    }
+
+    #click-me-div #smaller-hero-scene-wrapper {
+        display: none;
+    }
+
+    .pagination-section div {
+        margin: 10px 0 0 0;
+    }
+
+
+    .pagination-section {
+        margin: 10px 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /*.pagination-section .dropdown {*/
+    /*    align-items: center;*/
+    /*    width: 100%;*/
+    /*    justify-content: center;*/
+    /*    align-items: center;*/
+
+    /*}*/
+
+    .pagination-container {
+        display: flex;
+        /*justify-content: center;*/
+        flex-direction: column;
+    }
+
+
+    #results-header {
+        text-align: center;
+        width: 100%;
+        /*margin: 10px;*/
+    }
+
+    .dropdown {
+        justify-content: center;
+        align-items: center;
+        /*width: 80%;*/
+    }
+
+
+    #product-grid {
+        display: grid;
+        grid-template-columns: repeat(1, minmax(275px, auto));
+        grid-gap: 5px;
+        justify-content: center;
+        margin: 0 auto;
+    }
+
+    footer {
+        margin: 0;
+    }
+
+
+}
+
+
+
+
+
+

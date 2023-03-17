@@ -1,15 +1,23 @@
 /* Refactored code for screens with min-width: 500px and max-width: 1180px */
 @media screen and (min-width: 300px) and (max-width: 800px) {
+    /*body {*/
+    /*    display: flex;*/
+    /*    flex-direction: column;*/
+    /*    max-height: 100vh;*/
+    /*}*/
+
     body * {
         max-width: 100vw;
+        /*max-width: 100vw;*/
         /*max-height: 100vh;*/
     }
 
-    nav {
-        flex-wrap: wrap;
-    }
 
-    .navbar-container .navbar-center {}
+    /*nav {*/
+    /*    !*flex-wrap: wrap;*!*/
+    /*}*/
+
+    /*.navbar-container .navbar-center {}*/
 
     .input-group {
         margin: 0 3px 0 0;
@@ -21,6 +29,7 @@
         flex-wrap: wrap;
         margin: 0;
         justify-content: center;
+
     }
 
     .navbar-center {
@@ -141,15 +150,10 @@
     #product-grid {
         display: grid;
         grid-template-columns: repeat(1, minmax(275px, auto));
-        grid-gap: 5px;
-        justify-content: center;
-        margin: 0 auto;
+        /*grid-gap: 5px;*/
+        /*justify-content: center;*/
+        /*margin: 0 auto;*/
     }
-
-    footer {
-        margin: 0;
-    }
-
 
 }
 
